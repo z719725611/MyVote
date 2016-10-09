@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n" />
+		</Console>
+		
+		<File name="fileout" fileName="logs/browe.log">
+			<PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Logger name="com.yc" level="info" />
+		<!-- 设置自己包的输出日志级别 
+		name表示包下和子包下的所有类的日志输出级别
+		level表示日志级别
+		-->
+		<Root level="error">
+			<AppenderRef ref="STDOUT" />
+			<AppenderRef ref="fileout" />
+		</Root>
+	</Loggers>
+</Configuration>

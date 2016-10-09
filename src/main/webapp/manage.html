@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>投票列表</title>
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+
+<script src="js/jquery.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+		$(function(){
+			$.ajax({
+			type:"post",
+			url:"voteUser_findAll.action",
+			dataType:"json",
+			success:function(data){
+				if(data.code==1){
+					 $("#list").html("");
+					$(data.obj).each(function(index,item){
+						var str='<li ';
+						if(index%2==0){
+						str+=' class="odd" ';
+						}
+						str+='><h4>';
+						str+='<a href="">'+item.title+'</a>';
+						str+='</h4><div class="join">';
+						str+='<a href="vote.html?vsid='+item.vsid+'">我要参与</a></div>';
+						str+='<p class="info">共有'+item.optioncount+'个选项，已有'+item.usercount+'个网友参与了投票.</p>';
+						str+='</li>';
+						$("#list").html($("#list").html()+str); 
+						/* $("#list").html("");
+						$(data.obj).each(function(index,item){
+							var str='<li '
+							if(index%2==0){
+								str+='class="odd"';
+							}
+							str+='><h4>';
+							str+='<a href="">' + item.title +'</a>';
+							str+='</h4><div class="join">';
+							str+='<a href="vote.html?vsid=">我要参与</a></div>';
+							str+='<p class="info">共有'+ item.optioncount+'个选项'+item.usercount+'个网友参与了投票.</p>';
+							str+='</li>';
+							$("#list").html( $("#list").html() +str ); */
+					});
+				}else{
+					alert("查询数据失败，原因:"+data.msg)
+				}
+			}
+		});
+					
+		
+		$.ajax({
+			type:"post",
+			url:"voteSubject_getLoginUser.action",
+			dataType:"json",
+			success:function(data){
+				if(data.code==1){
+					$("#loginuser").html(data.obj.uname);
+				}else{
+					alert("你还没有登录");
+					location.href="login.html";
+				}
+			}
+		
+		});
+	});
+</script>
+</head>
+<body>
+
+	<div id="header" class="wrap">
+		<img src="images/logo.gif" />
+	</div>
+	<div id="navbar" class="wrap">
+		<div class="profile">
+			您好，<span id="loginuser"></span>
+			 <span class="return"><a href="manage.html">返回列表</a></span>
+			<span class="addnew"><a href="add.html">添加新投票</a></span> <span
+				class="modify"><a href="">维护</a></span>
+
+		</div>
+		<div class="search">
+			<form method="post" action="voteSubject_search.action">
+				<input type="text" name="title" class="input-text" value="" /><input
+					type="submit" name="submit" class="input-button" value="" />
+			</form>
+		</div>
+	</div>
+
+	<div id="vote" class="wrap">
+		<h2>投票列表</h2>
+		<ul class="list" id="list">
+
+
+			<li class="odd">
+				<h4>
+					<a href="Vote!view.action?entityId=103">&#xD1;&#xA1;&#xB3;&#xF6;&#xC4;&#xE3;&#xD0;&#xC4;&#xC4;&#xBF;&#xD6;&#xD0;&#xD7;&#xEE;&#xBA;&#xC3;&#xB5;&#xC4;&#xCF;&#xC2;&#xD4;&#xD8;&#xB9;&#xA4;&#xBE;&#xDF;</a>
+				</h4>
+				<div class="join">
+					<a href="Vote.action?entityId=103">我要参与</a>
+				</div>
+				<p class="info">共有 5 个选项，已有 个网友参与了投票。</p>
+			</li>
+
+			
+
+		</ul>
+	</div>
+	<div id="footer" class="wrap">源辰信息 &copy; 版权所有</div>
+</body>
+</html>

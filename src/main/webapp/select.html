@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电影信息查询</title>
+
+
+<script type="text/javascript" src="js/jquery.min.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+	$(function(){
+		$("#inputbutton").click(function(){
+			$.ajax({
+				type:"post",
+				data:$("#myform").serialize(),
+				url:"film_select.action",
+				dataType:"json",
+				success:function(data){
+					if(data.code==1){
+						alert("查询成功");
+						location.href="list.html";
+					}else{
+						alert("查询失败");
+						
+					}
+				}
+			});
+		});
+	});
+</script>
+</head>
+<body>
+	<form id="myform" method="post" action="">
+				<dl>
+					
+					<dt>电影名称：</dt>
+					<dd>
+						<input type="text" class="input-text" name="filmname" value="" />
+					</dd>
+					<dt>电影类型：</dt>
+					<dd>
+						
+						<input type="text" class="input-text" name="filmtype" value="" />
+					</dd>
+					<dt>主演：</dt>
+					<dd>
+						<input type="text" class="input-text" name="actor"
+							value="" />
+					</dd>
+					<dt>导演：</dt>
+					<dd>
+						<input type="text" class="input-text" name="director"
+							value="" />
+					</dd>
+					<dt>价格：</dt>
+					<dd>
+						<input type="text" class="input-text" name="price"
+							value="" />至<input type="text" class="input-text" name="price"
+							value="" />
+					</dd>
+					<dt>查询：</dt>
+					<dd>
+						<input type="button" id="inputbutton" class="input-button" name="submit" value="提交查询内容" />
+					</dd>
+				</dl>
+			</form>
+</body>
+</html>

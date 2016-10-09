@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>参与投票</title>
+
+<script type="text/javascript" src="js/jquery.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+
+<script type="text/javascript">
+	$(function(){
+		//取出地址栏中的参数vsid  主题编号
+		var href=location.href;
+		var index=href.indexOf("?");
+		var params=href.substring(index+1);//vsid=1
+		
+		$("#votebutton").click(function(){
+			$.ajax({
+				type:"post",
+				url:"voteSubject_vote.action",
+				data:$("#myform").serialize(),
+				success:function(data){
+					if(data.code==1){
+						alert("投票成功");
+						location.href="view.html?"+params;
+					}else{
+						alert("投票失败，原因:"+data.msg);
+					}
+				}
+			});
+		});
+		
+		$.ajax({
+			type:"post",
+			url:"voteSubject_getLoginUser.action",
+			dataType:"json",
+			success:function(data){
+				if(data.code==1){
+					$("#loginuser").html(data.obj.uname);
+				}else{
+					alert("你还没有登录");
+					location.href="login.html";
+				}
+			}
+		});
+		
+		//发ajax请求，得到所有的数据  当前vsid下所有的subject 的style， voteoption
+		$.ajax({
+			type:"post",
+			url:"voteSubject_findByVsid.action",
+			data:params,
+			dataType:"json",
+			success:function(data){
+				if(data.code==1){
+					data=data.obj;//votesubject  里面包括vsid，title，usercount（投票的用户数），optioncount（选项数），options
+					
+					$("#title").html(data.title);
+					$("#optioncount").html(data.optioncount);
+					$("#usercount").html(data.usercount);
+					$("#vsid").val(data.vsid);
+					
+					$("#view").attr("href","view.html?"+params);
+					
+					var listr="";
+					$("#options").html("");
+					for(var i=0;i<data.options.length;i++){
+						var option=data.options[i];
+						if(data.stype==1){
+							listr+='<li><input type="radio" name="chooseIds" value="'+option.voteid+'" />'+option.voteoption+'</li>';
+						}else{
+							listr+='<li><input type="checkbox" name="chooseIds" value="'+option.voteid+'" />'+option.voteoption+'</li>';
+						}
+					}
+					$("#options").html(listr);
+				}else{
+					alert("查询失败，原因:"+data.msg);
+				}
+			}
+		});
+		
+	});
+</script>
+
+</head>
+<body>
+
+	<div id="header" class="wrap">
+		<img src="images/logo.gif" />
+	</div>
+	<div id="navbar" class="wrap">
+		<div class="profile">
+			您好，<span id="loginuser"></span>
+			 <span class="return"><a href="manage.html">返回列表</a></span>
+			<span class="addnew"><a href="add.html">添加新投票</a></span> <span
+				class="modify"><a href="">维护</a></span>
+
+		</div>
+		<div class="search">
+			<form method="post" action="Subject!search.action">
+				<input type="text" name="keywords" class="input-text" value="" />
+				<input type="submit" name="submit" class="input-button" value="" />
+			</form>
+		</div>
+	</div>
+
+	<div id="vote" class="wrap">
+		<h2>参与投票</h2>
+		<ul class="list">
+			<li>
+				<h4><span id="title"></span></h4>
+				<p class="info">共有 <span id="optioncount"></span> 个选项，已有 <span id="usercount"></span> 个网友参与了投票。</p>
+				<form id="myform" method="post" action="">
+					<input type="hidden" id="vsid" name="vsid" value="xx" />
+					<ol id="options">
+						
+					</ol>
+					<p class="voteView">
+						<input type="button" src="images/button_vote.gif" id="votebutton" value="投票" /><a id="view" href=""><img src="images/button_view.gif" /></a>
+					</p>
+				</form>
+			</li>
+		</ul>
+	</div>
+	<div id="footer" class="wrap">源辰信息 &copy; 版权所有</div>
+</body>
+</html>

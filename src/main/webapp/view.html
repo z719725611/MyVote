@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title></title>
+<script type="text/javascript" src="js/jquery.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+
+<script type="text/javascript">
+$(function(){
+	var href=location.href;
+	var index=href.indexOf("?");
+	var params=href.substring(index+1);//vsid=xxx
+	
+	$.ajax({
+		type:"post",
+		url:"voteSubject_getLoginUser.action",
+		dataType:"json",
+		success:function(data){
+			if(data.code==1){
+				$("#loginuser").html(data.obj.uname);
+			}else{
+				alert("你还没有登录");
+				location.href="login.html";
+			}
+		}
+	});
+	
+	//发ajax请求  得到所有的数据
+	$.ajax({
+		type:"post",
+		url:"voteSubject_findByVsidW.action",
+		data:params,
+		dataType:"json",
+		success:function(data){
+			if(data.code==1){
+				data=data.obj;
+				$("#title").html(data.title);
+				$("#optioncount").html(data.optioncount);
+				$("#usercount").html(data.usercount);
+				
+				$("#returnLink").attr("href","vote.html?"+params);
+				
+				var listr="";
+				$("#result").html("");
+				var total=0;
+				//计算当前的vsid主题总的投票数
+				for(var i=0;i<data.options.length;i++){
+					var option=data.options[i];
+					if(option.votecount){
+						total+=option.votecount;
+					}
+				}
+				
+				for(var i=0;i<data.options.length;i++){
+					var option=data.options[i];
+					listr+='<li><div class="rate">'+option.voteoption;
+					var rate=0;
+					var count=0;
+					//在struts中配置了如果votecount没有值的话（null），则不会返回数据到json字符串中
+					//所以在这里取的时候会得到undefined
+					if(option.votecount){//如果有数据，则取出
+						count=option.votecount;
+						rate=option.votecount/total*100;//计算比率
+					}
+					
+					listr+='<div class="ratebg"><div class="percent" style="width:'+rate+'%"></div></div>';
+					listr+='<p>'+count+'票<span>('+rate+'%)</span></p>';
+					listr+='</div></li>';
+				}
+				$("#result").html(listr);
+			}else{
+				alert("查询数据失败，原因:"+data.msg);
+				
+			}
+		}
+	});
+});
+		
+</script>
+
+
+</head>
+<body>
+
+	<div id="header" class="wrap">
+		<img src="images/logo.gif" />
+	</div>
+	<div id="navbar" class="wrap">
+		<div class="profile">
+			您好，<span id="loginuser"></span>
+			 <span class="return"><a href="manage.html">返回列表</a></span>
+			<span class="addnew"><a href="add.html">添加新投票</a></span> <span
+				class="modify"><a href="">维护</a></span>
+
+		</div>
+		<div class="search">
+			<form method="post" action="Subject!search.action">
+				<input type="text" name="title" class="input-text" value="" /><input
+					type="submit" name="submit" class="input-button" value="" />
+			</form>
+		</div>
+	</div>
+
+	<div id="vote" class="wrap">
+		<h2>查看投票</h2>
+		<ul class="list">
+			<li>
+				<h4><span id="title"></span></h4>
+				<p class="info">共有 <span id="optioncount"></span> 个选项，已有 <span id="usercount"></span> 个网友参与了投票。</p>
+				<ol id="result">
+
+					<li>
+						<div class="rate">
+							<div class="ratebg">
+								<div class="percent" style="width: 0%"></div>
+							</div>
+							<p>
+								0票<span>(0%)</span>
+							</p>
+						</div>
+					</li>
+
+					<li>
+						<div class="rate">
+							<div class="ratebg">
+								<div class="percent" style="width: 0%"></div>
+							</div>
+							<p>
+								0票<span>(0%)</span>
+							</p>
+						</div>
+					</li>
+
+					<li>
+						<div class="rate">
+							<div class="ratebg">
+								<div class="percent" style="width: 0%"></div>
+							</div>
+							<p>
+								0票<span>(0%)</span>
+							</p>
+						</div>
+					</li>
+
+					<li>
+						<div class="rate">
+							<div class="ratebg">
+								<div class="percent" style="width: 0%"></div>
+							</div>
+							<p>
+								0票<span>(0%)</span>
+							</p>
+						</div>
+					</li>
+
+					<li>
+						<div class="rate">
+							<div class="ratebg">
+								<div class="percent" style="width: 0%"></div>
+							</div>
+							<p>
+								0票<span>(0%)</span>
+							</p>
+						</div>
+					</li>
+
+				</ol>
+				<div class="goback">
+					<a href="manage.html">返回投票列表</a>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div id="footer" class="wrap">源辰信息 &copy; 版权所有</div>
+</body>
+</html>
